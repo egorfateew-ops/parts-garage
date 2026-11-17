@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     tecdoc_vin_auth_prefix: str = ""
     tecdoc_vin_country: str = "RU"
 
+    tecdoc_provider_id: str = ""
     tecdoc_parts_url: str = ""
     tecdoc_parts_api_key: str = ""
     tecdoc_parts_auth_header: str = "Authorization"
