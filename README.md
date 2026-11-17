@@ -49,7 +49,7 @@ Backend находится в папке backend. Он проксирует за
 - API key / token и точный способ авторизации;
 - endpoint VIN-сервиса и разрешённые страны;
 - endpoint TecDoc Web Service;
-- Provider ID, если он предусмотрен вашим договором;
+- Provider ID, если он предусмотрен вашим договором; (backend exposes TECDOC_PROVIDER_ID and {provider_id} template placeholder)
 - пример запроса и ответа для поиска статей по KType;
 - коды product groups для категорий магазина;
 - ограничения по запросам, показу фотографий и хранению каталожных данных.
