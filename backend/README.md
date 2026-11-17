@@ -24,7 +24,7 @@ GET {TECDOC_VIN_BASE_URL}/api/v1/vin/{country}/{vin}
 
 The route returns the TecDoc vehicle matches and KType/NType data. A VIN may return multiple variants; the storefront asks the customer to select the correct one.
 
-The parts adapter deliberately takes TECDOC_PARTS_URL and TECDOC_PARTS_REQUEST_TEMPLATE from environment variables. TecDoc Web Service contracts can differ by product, region and licence, and may use REST/JSON or SOAP. Do not guess an endpoint or reuse the China-only OneDB endpoint for a different market. Obtain the Web Service endpoint, authentication rules and request/response schema from your TecAlliance account manager, then set the environment values. The JSON template supports {ktype}, {country}, {language}, {page} and {per_page} placeholders.
+The parts adapter deliberately takes TECDOC_PARTS_URL and TECDOC_PARTS_REQUEST_TEMPLATE from environment variables. TecDoc Web Service contracts can differ by product, region and licence, and may use REST/JSON or SOAP. Do not guess an endpoint or reuse the China-only OneDB endpoint for a different market. Obtain the Web Service endpoint, authentication rules and request/response schema from your TecAlliance account manager, then set the environment values. The JSON template supports {ktype}, {country}, {language}, {page}, {per_page} and {provider_id} placeholders.
 
 Optional TECDOC_PRODUCT_GROUP_MAP is a JSON object mapping the storefront categories (engine, brakes, suspension, electrics, body, consumables) to the product-group IDs included in your licensed catalogue.
 
