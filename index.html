@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#101214" />
+  <meta name="description" content="PARTS GARAGE — подбор и заказ автозапчастей по VIN и автомобилю." />
+  <title>PARTS GARAGE — автозапчасти под заказ</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="topline">
+    <div class="container topline-inner">
+      <span><i class="dot"></i> Подбор и доставка автозапчастей под заказ</span>
+      <div class="topline-right"><span>Пн–Сб · 09:00–20:00</span><a href="tel:+78005553535">8 800 555-35-35</a></div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="container header-main">
+      <a class="brand" href="#home" aria-label="PARTS GARAGE — на главную">
+        <span class="brand-mark"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M29.8 5.5a17.6 17.6 0 0 0-21.5 21.1L3.5 31.4l13.1 13.1 4.8-4.8A17.6 17.6 0 0 0 42.5 18.2l-9.2 9.2-8.3-1.8-1.8-8.3 9.2-9.2a17.5 17.5 0 0 0-2.6-2.6Z" fill="currentColor"/><circle cx="17.5" cy="30.5" r="4.2" fill="#111416"/></svg></span>
+        <span class="brand-name">PARTS<span>GARAGE</span><small>ЗАПЧАСТИ БЕЗ ЛИШНИХ ПОИСКОВ</small></span>
+      </a>
+      <nav class="main-nav" aria-label="Основная навигация">
+        <a href="#catalog">Каталог</a><a href="#how">Как заказать</a><a href="#delivery">Доставка</a><a href="#reviews">Отзывы</a>
+      </nav>
+      <div class="header-actions">
+        <button class="icon-btn" id="favoritesBtn" aria-label="Избранное" title="Избранное"><svg viewBox="0 0 24 24"><path d="M20.8 8.8c0 5.2-8.8 10.1-8.8 10.1S3.2 14 3.2 8.8A4.8 4.8 0 0 1 12 6.1a4.8 4.8 0 0 1 8.8 2.7Z"/></svg><b class="counter" id="favCount">0</b></button>
+        <button class="icon-btn" id="accountBtn" aria-label="Личный кабинет" title="Личный кабинет"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.8-3.5 3.3-5.2 7.5-5.2s6.7 1.7 7.5 5.2"/></svg></button>
+        <button class="cart-button" id="cartBtn"><svg viewBox="0 0 24 24"><path d="M3 4h2l2.2 11.2a2 2 0 0 0 2 1.6h8.9a2 2 0 0 0 1.9-1.4L22 8H6"/><circle cx="10" cy="20" r="1"/><circle cx="18" cy="20" r="1"/></svg><span>Корзина</span><b class="cart-count" id="cartCount">0</b></button>
+        <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Открыть меню"><span></span><span></span></button>
+      </div>
+    </div>
+    <div class="container search-row">
+      <button class="catalog-trigger" id="catalogTrigger"><svg viewBox="0 0 24 24"><path d="M4 5h6v6H4zM14 5h6v6h-6zM4 15h6v5H4zM14 15h6v5h-6z"/></svg> Каталог запчастей</button>
+      <label class="global-search"><svg viewBox="0 0 24 24"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 5 5"/></svg><input id="globalSearch" type="search" placeholder="Найти деталь, артикул или производителя..." autocomplete="off"><kbd>ENTER</kbd></label>
+      <button class="vin-link" id="vinHeaderBtn"><svg viewBox="0 0 24 24"><path d="M3 13.5 5.2 8a2 2 0 0 1 1.9-1.3h9.8A2 2 0 0 1 18.8 8l2.2 5.5v4h-2v-2H5v2H3zM5 13h14M7 17.5h.1M17 17.5h.1"/></svg> Подбор по VIN</button>
+    </div>
+    <div class="mobile-nav" id="mobileNav"><a href="#catalog">Каталог</a><a href="#how">Как заказать</a><a href="#delivery">Доставка</a><a href="#reviews">Отзывы</a></div>
+  </header>
+
+  <main id="home">
+    <section class="hero">
+      <div class="hero-bg"></div><div class="hero-grid"></div>
+      <div class="container hero-content">
+        <div class="hero-copy">
+          <div class="eyebrow"><span></span> АВТОЗАПЧАСТИ ПОД ЗАКАЗ</div>
+          <h1>Твоя машина.<br><em>Наши детали.</em></h1>
+          <p>Находим нужные запчасти у проверенных поставщиков. Проверяем совместимость, согласовываем цену и доставляем до тебя.</p>
+          <div class="hero-actions"><a class="btn btn-primary" href="#catalog">Перейти в каталог <span>↗</span></a><button class="btn btn-outline" id="heroRequestBtn">Не нашёл деталь?</button></div>
+          <div class="hero-proof"><div class="proof-avatars"><span>А</span><span>М</span><span>И</span><span>+</span></div><div><strong>2 400+</strong><small>довольных автовладельцев</small></div><div class="proof-divider"></div><div><strong>от 3 дней</strong><small>срок поставки*</small></div></div>
+        </div>
+        <div class="hero-side">
+          <div class="vin-card">
+            <div class="vin-card-top"><span class="mini-icon">⌕</span><span class="status-pill"><i></i> БЫСТРЫЙ ПОДБОР</span></div>
+            <h3>Подберём точно<br>под твой автомобиль</h3>
+            <p>Укажи VIN — проверим применимость детали до заказа.</p>
+            <form id="heroVinForm" class="vin-form"><input id="heroVin" maxlength="17" placeholder="Введи VIN автомобиля" aria-label="VIN автомобиля"><button type="submit" aria-label="Найти по VIN">→</button></form>
+            <div class="vin-help"><span>ⓘ</span> 17 символов в СТС или под лобовым стеклом</div>
+            <button class="text-link" id="vinHelpBtn">Где найти VIN? <span>↗</span></button>
+          </div>
+          <div class="hero-float"><span class="float-icon">✓</span><div><strong>Совместимость проверена</strong><small>Перед подтверждением заказа</small></div></div>
+        </div>
+      </div>
+      <div class="hero-bottom container"><span>01 / 04</span><div class="hero-progress"><i></i></div><span>ЗАПЧАСТИ ДЛЯ ТЕХ, КТО ЦЕНИТ СВОЁ ВРЕМЯ</span></div>
+    </section>
+
+    <section class="quick-search-section">
+      <div class="container">
+        <div class="section-heading compact-heading"><div><span class="section-kicker">БЫСТРЫЙ ПОДБОР</span><h2>С чего начнём?</h2></div><p>Выбери удобный способ поиска —<br>остальное мы возьмём на себя.</p></div>
+        <div class="quick-search-card">
+          <div class="quick-search-tabs"><button class="quick-tab active" data-tab="car">По автомобилю</button><button class="quick-tab" data-tab="part">По названию детали</button></div>
+          <form id="carSearchForm" class="car-search-form">
+            <label><span>Марка автомобиля</span><select id="carMake"><option value="">Выбрать марку</option><option>BMW</option><option>Mercedes-Benz</option><option>Volkswagen</option><option>Audi</option><option>Toyota</option><option>Hyundai</option><option>Kia</option><option>Lada</option><option>Skoda</option></select></label>
+            <label><span>Модель</span><select id="carModel"><option value="">Сначала марка</option></select></label>
+            <label><span>Год выпуска</span><select id="carYear"><option value="">Любой год</option><option>2024</option><option>2022</option><option>2020</option><option>2018</option><option>2015</option><option>2010</option><option>2005</option></select></label>
+            <label><span>Двигатель</span><select id="carEngine"><option value="">Любой двигатель</option><option>Бензин</option><option>Дизель</option><option>Гибрид</option><option>Электро</option></select></label>
+            <button class="btn btn-primary search-submit" type="submit">Подобрать детали <span>→</span></button>
+          </form>
+          <form id="partSearchForm" class="part-search-form hidden"><label><span>Что ищем?</span><input id="partSearchInput" placeholder="Например, тормозные колодки или 0986..." /></label><button class="btn btn-primary" type="submit">Найти запчасть <span>→</span></button></form>
+          <div class="search-footnote"><span>✓</span> Подбор по VIN и каталогам производителей <span class="footnote-sep">·</span> <span>✓</span> Проверка перед оплатой</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section categories-section" id="catalog">
+      <div class="container">
+        <div class="section-heading"><div><span class="section-kicker">КАТАЛОГ</span><h2>Найди свою деталь</h2></div><a class="arrow-link" href="#products">Все запчасти <span>↗</span></a></div>
+        <div class="category-grid" id="categoryGrid">
+          <button class="category-card category-engine" data-category="engine"><span class="category-number">01</span><span class="category-symbol">⚙</span><strong>Двигатель</strong><small>Ремни, фильтры, детали ДВС</small><span class="category-arrow">↗</span></button>
+          <button class="category-card category-brakes" data-category="brakes"><span class="category-number">02</span><span class="category-symbol">◉</span><strong>Тормозная система</strong><small>Диски, колодки, суппорты</small><span class="category-arrow">↗</span></button>
+          <button class="category-card category-suspension" data-category="suspension"><span class="category-number">03</span><span class="category-symbol">⌁</span><strong>Подвеска</strong><small>Амортизаторы, рычаги, стойки</small><span class="category-arrow">↗</span></button>
+          <button class="category-card category-electrics" data-category="electrics"><span class="category-number">04</span><span class="category-symbol">ϟ</span><strong>Электрика</strong><small>Датчики, генераторы, стартеры</small><span class="category-arrow">↗</span></button>
+          <button class="category-card category-body" data-category="body"><span class="category-number">05</span><span class="category-symbol">▱</span><strong>Кузов и оптика</strong><small>Фары, зеркала, элементы кузова</small><span class="category-arrow">↗</span></button>
+          <button class="category-card category-consumables" data-category="consumables"><span class="category-number">06</span><span class="category-symbol">◈</span><strong>Расходники</strong><small>Масла, фильтры, свечи</small><span class="category-arrow">↗</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="section products-section" id="products">
+      <div class="container">
+        <div class="section-heading products-heading"><div><span class="section-kicker">ВЫБОР КЛИЕНТОВ</span><h2>Популярные запчасти</h2></div><div class="product-controls"><div class="filter-chips" id="filterChips"><button class="filter-chip active" data-filter="all">Все</button><button class="filter-chip" data-filter="engine">Двигатель</button><button class="filter-chip" data-filter="brakes">Тормоза</button><button class="filter-chip" data-filter="suspension">Подвеска</button><button class="filter-chip" data-filter="consumables">Расходники</button></div><select class="sort-select" id="sortSelect" aria-label="Сортировка"><option value="popular">Сначала популярные</option><option value="priceAsc">Сначала дешевле</option><option value="priceDesc">Сначала дороже</option><option value="name">По названию</option></select></div></div>
+        <div class="active-filter-line"><span id="resultCount">12 товаров</span><span id="activeFilterLabel">Подборка PARTS GARAGE</span><button id="clearFilters" class="clear-filter hidden">Сбросить фильтры ×</button></div>
+        <div class="product-grid" id="productGrid"></div>
+        <div class="catalog-bottom"><span>Показаны демонстрационные позиции каталога</span><button class="btn btn-dark-outline" id="showMoreBtn">Показать ещё <span>↓</span></button></div>
+      </div>
+    </section>
+
+    <section class="request-banner-section">
+      <div class="container"><div class="request-banner"><div class="request-banner-bg"></div><div class="request-banner-content"><span class="section-kicker">ИНДИВИДУАЛЬНЫЙ ПОДБОР</span><h2>Не нашёл нужную<br><em>запчасть?</em></h2><p>Пришли фото, артикул или VIN. Найдём варианты, сравним цены и предложим лучшее решение.</p><button class="btn btn-primary" id="bannerRequestBtn">Оставить заявку <span>↗</span></button></div><div class="request-stamp"><span>PARTS</span><strong>WE<br>FIND<br>IT.</strong><small>ТВОЯ ДЕТАЛЬ — НАША ЗАДАЧА</small></div></div></div>
+    </section>
+
+    <section class="section how-section" id="how">
+      <div class="container"><div class="section-heading"><div><span class="section-kicker">ПРОСТО И ПРОЗРАЧНО</span><h2>От запроса до установки</h2></div><p>Всего четыре шага — и нужная<br>деталь уже у тебя.</p></div>
+        <div class="steps-grid"><article class="step-card"><span class="step-index">01</span><div class="step-icon">⌕</div><h3>Оставляешь запрос</h3><p>Укажи автомобиль и деталь. Можно просто отправить VIN или фото.</p><span class="step-line"></span></article><article class="step-card"><span class="step-index">02</span><div class="step-icon">◈</div><h3>Мы подбираем</h3><p>Проверяем каталоги, совместимость, наличие и предложения поставщиков.</p><span class="step-line"></span></article><article class="step-card"><span class="step-index">03</span><div class="step-icon">✓</div><h3>Согласовываем</h3><p>Показываем варианты, финальную цену и ориентировочный срок доставки.</p><span class="step-line"></span></article><article class="step-card"><span class="step-index">04</span><div class="step-icon">↗</div><h3>Получаешь заказ</h3><p>Отслеживаешь статус и забираешь запчасть удобным способом.</p><span class="step-line"></span></article></div>
+      </div>
+    </section>
+
+    <section class="section benefits-section" id="delivery"><div class="container benefits-wrap"><div class="benefits-copy"><span class="section-kicker">ПОЧЕМУ PARTS GARAGE</span><h2>Детали — это просто.<br><em>Когда знаешь, где искать.</em></h2><p>Мы не обещаем невозможного. Мы делаем подбор понятным: объясняем разницу между аналогами, не скрываем сроки и подтверждаем заказ до оплаты.</p><a href="#how" class="arrow-link">Подробнее о процессе <span>↗</span></a></div><div class="benefit-list"><div class="benefit-item"><span>01</span><div><strong>Проверка совместимости</strong><small>Сверяем применимость по VIN и каталогам</small></div><b>↗</b></div><div class="benefit-item"><span>02</span><div><strong>Оригинал и проверенные аналоги</strong><small>Подбираем варианты под задачу и бюджет</small></div><b>↗</b></div><div class="benefit-item"><span>03</span><div><strong>Понятные сроки и цена</strong><small>Согласовываем условия до оформления</small></div><b>↗</b></div><div class="benefit-item"><span>04</span><div><strong>Поддержка по заказу</strong><small>Помогаем на каждом этапе доставки</small></div><b>↗</b></div></div></div></section>
+
+    <section class="section reviews-section" id="reviews"><div class="container"><div class="section-heading"><div><span class="section-kicker">ОТЗЫВЫ</span><h2>Нас рекомендуют</h2></div><div class="review-score"><strong>4.9</strong><span>★★★★★<small>На основе 320+ отзывов</small></span></div></div><div class="reviews-grid"><article class="review-card"><div class="review-stars">★★★★★</div><p>«Нашли редкий датчик на мою Audi. До этого в трёх местах говорили, что ждать месяц. Здесь предложили два варианта и всё объяснили».</p><div class="review-author"><span class="review-avatar">АК</span><div><strong>Алексей К.</strong><small>Audi A4 · заказ #PG-2048</small></div><time>12.11.2026</time></div></article><article class="review-card"><div class="review-stars">★★★★★</div><p>«Понравилось, что сначала проверили VIN и только потом выставили счёт. Колодки подошли идеально, доставили в обещанный срок».</p><div class="review-author"><span class="review-avatar avatar-two">МВ</span><div><strong>Мария В.</strong><small>Volkswagen Tiguan · заказ #PG-1982</small></div><time>08.11.2026</time></div></article><article class="review-card"><div class="review-stars">★★★★★</div><p>«Заказывал комплект ГРМ. Менеджер был на связи, присылал статус. Удобно, что можно выбрать оригинал или хороший аналог».</p><div class="review-author"><span class="review-avatar avatar-three">ДР</span><div><strong>Дмитрий Р.</strong><small>BMW 3 Series · заказ #PG-1901</small></div><time>02.11.2026</time></div></article></div></div></section>
+
+    <section class="newsletter-section"><div class="container newsletter-inner"><div><span class="section-kicker">PARTS GARAGE / INSIDE</span><h2>Полезное для твоего авто</h2><p>Новые поступления, сезонные подборки и советы без спама.</p></div><form id="newsletterForm"><input type="email" id="newsletterEmail" placeholder="Твой e-mail" required><button type="submit">Подписаться <span>→</span></button></form></div></section>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-main"><div class="footer-brand"><a class="brand" href="#home"><span class="brand-mark"><svg viewBox="0 0 48 48"><path d="M29.8 5.5a17.6 17.6 0 0 0-21.5 21.1L3.5 31.4l13.1 13.1 4.8-4.8A17.6 17.6 0 0 0 42.5 18.2l-9.2 9.2-8.3-1.8-1.8-8.3 9.2-9.2a17.5 17.5 0 0 0-2.6-2.6Z" fill="currentColor"/><circle cx="17.5" cy="30.5" r="4.2" fill="#111416"/></svg></span><span class="brand-name">PARTS<span>GARAGE</span><small>ЗАПЧАСТИ БЕЗ ЛИШНИХ ПОИСКОВ</small></span></a><p>Подбор и заказ автозапчастей.<br>Чётко. Понятно. По делу.</p></div><div class="footer-col"><strong>Покупателям</strong><a href="#catalog">Каталог</a><a href="#how">Как заказать</a><a href="#delivery">Доставка и оплата</a><a href="#reviews">Отзывы</a></div><div class="footer-col"><strong>Помощь</strong><a href="#" id="trackOrderFooter">Отследить заказ</a><a href="#" id="requestFooter">Оставить заявку</a><a href="#" id="adminFooter" class="admin-link">Управление магазином</a></div><div class="footer-contact"><strong>Есть вопросы?</strong><a class="footer-phone" href="tel:+78005553535">8 800 555-35-35</a><small>Ежедневно, 09:00–20:00</small><div class="socials"><a href="#" aria-label="Telegram">tg</a><a href="#" aria-label="VK">vk</a><a href="#" aria-label="WhatsApp">wa</a></div></div></div><div class="container footer-bottom"><span>© 2026 PARTS GARAGE. Демонстрационный проект.</span><span>Цены и наличие уточняются при подтверждении заказа.</span><a href="#home">Наверх ↑</a></div></footer>
+
+  <div class="toast-stack" id="toastStack" aria-live="polite"></div>
+  <div class="modal-root" id="modalRoot" aria-hidden="true"></div>
+  <aside class="cart-drawer" id="cartDrawer" aria-hidden="true"><div class="drawer-head"><div><span class="section-kicker">ВАШ ВЫБОР</span><h2>Корзина <small id="drawerCount">0</small></h2></div><button class="close-btn" id="closeCart" aria-label="Закрыть">×</button></div><div class="cart-items" id="cartItems"></div><div class="cart-empty" id="cartEmpty"><div>⌑</div><h3>Пока здесь пусто</h3><p>Добавь нужные детали — они появятся здесь.</p><button class="btn btn-primary" id="continueShopping">Перейти в каталог</button></div><div class="drawer-bottom" id="drawerBottom"><div class="cart-total"><span>Итого</span><strong id="cartTotal">0 ₽</strong></div><small>Стоимость доставки уточняется при подтверждении</small><button class="btn btn-primary full-btn" id="checkoutBtn">Оформить заказ <span>→</span></button></div></aside>
+  <div class="drawer-scrim" id="drawerScrim"></div>
+  <script src="app.js"></script>
+</body>
+</html>
