@@ -55,49 +55,104 @@ function closeCart(){ $('#cartDrawer').classList.remove('open');$('#drawerScrim'
 function modal(title,subtitle,body,wide=false){$('#modalRoot').innerHTML=`<div class="modal ${wide?'wide':''}"><div class="modal-head"><div><span class="section-kicker">PARTS GARAGE / SERVICE</span><h2>${title}</h2>${subtitle?`<p>${subtitle}</p>`:''}</div><button class="close-btn" id="modalClose" aria-label="Закрыть">×</button></div><div class="modal-body">${body}</div></div>`;$('#modalRoot').classList.add('open');$('#modalRoot').setAttribute('aria-hidden','false');$('#modalClose').onclick=closeModal;$('#modalRoot').onclick=e=>{if(e.target===$('#modalRoot'))closeModal()};}
 function closeModal(){ $('#modalRoot').classList.remove('open');$('#modalRoot').setAttribute('aria-hidden','true');$('#modalRoot').innerHTML=''; }
 function openRequestModal(prefill={}){closeCart();modal('Найдём нужную деталь','Оставь контакты и информацию об автомобиле. Менеджер уточнит детали и вернётся с вариантами.',`<form id="requestForm"><div class="form-grid"><div class="field"><label>ТВОЁ ИМЯ *</label><input name="name" placeholder="Как к тебе обращаться" required></div><div class="field"><label>ТЕЛЕФОН *</label><input name="phone" placeholder="+7 (___) ___-__-__" required></div><div class="field"><label>МАРКА И МОДЕЛЬ</label><input name="car" value="${escapeAttr(prefill.car||'')}" placeholder="Например, BMW 3 Series"></div><div class="field"><label>VIN</label><input name="vin" maxlength="17" value="${escapeAttr(prefill.vin||'')}" placeholder="17 символов"></div><div class="field full"><label>КАКАЯ ДЕТАЛЬ НУЖНА? *</label><input name="part" value="${escapeAttr(prefill.part||'')}" placeholder="Название, артикул или ссылка" required></div><div class="field full"><label>КОММЕНТАРИЙ</label><textarea name="comment" placeholder="Год выпуска, двигатель, сторона установки и другие детали"></textarea></div></div><p class="form-note">Нажимая кнопку, ты соглашаешься на обработку данных для ответа на заявку. В демо-версии заявка сохраняется только в этом браузере.</p><button class="btn btn-primary modal-submit" type="submit">Отправить заявку <span>→</span></button></form>`);$('#requestForm').onsubmit=e=>{e.preventDefault();const data=Object.fromEntries(new FormData(e.currentTarget));const item={id:'REQ-'+Date.now().toString().slice(-6),date:new Date().toLocaleDateString('ru-RU'),status:'Новая заявка',...data};requests.unshift(item);save('requests',requests);closeModal();toast(`Заявка ${item.id} сохранена`);};}
+let activeVin = '';
+let activeVinVehicles = [];
+let activeTecDocVehicle = null;
+let activeTecDocParts = [];
+
 function cleanVin(v){return String(v||'').replace(/\s+/g,'').toUpperCase();}
 function vinFormatIsValid(v){return /^[A-HJ-NPR-Z0-9]{17}$/.test(v);}
-function vinValue(v){const s=String(v??'').trim();return !s||/^(not applicable|not available|0|none|n\/a)$/i.test(s)?'':s;}
-function buildVinVehicle(result){
-  const make=vinValue(result.Make),model=vinValue(result.Model),year=vinValue(result.ModelYear),trim=vinValue(result.Trim)||vinValue(result.Series);
-  const engine=[vinValue(result.DisplacementL)?vinValue(result.DisplacementL)+' л':'',vinValue(result.EngineCylinders)?vinValue(result.EngineCylinders)+' цил.':'',vinValue(result.EngineConfiguration)].filter(Boolean).join(', ');
-  const fields=[
-    ['Марка',make],['Модель',model],['Год',year],['Комплектация',trim],
-    ['Кузов',vinValue(result.BodyClass)],['Двигатель',engine],
-    ['Топливо',vinValue(result.FuelTypePrimary)],['Привод',vinValue(result.DriveType)],
-    ['Коробка',vinValue(result.TransmissionStyle)],['Страна сборки',vinValue(result.PlantCountry)]
-  ].filter(x=>x[1]);
-  const title=[year,make,model,trim].filter(Boolean).join(' ');
-  return {make,model,year,trim,title,fields,errorCode:vinValue(result.ErrorCode)};
+function safeImageUrl(url){return typeof url==='string'&&/^https:\/\//i.test(url)?url:'';}
+function vehicleTitle(vehicle){return vehicle?.title||[vehicle?.make,vehicle?.model].filter(Boolean).join(' ')||'Автомобиль TecDoc';}
+function renderVehicleFields(vehicle){return (vehicle.fields||[]).map(field=>'<div class="vin-result-item"><small>'+escapeAttr(field.label)+'</small><strong>'+escapeAttr(field.value)+'</strong></div>').join('');}
+async function backendRequest(path,options={}){
+  const base=String(window.PG_API_BASE_URL||'').replace(/\/+$/,'');
+  if(!base)throw new Error('Адрес backend ещё не настроен. Сначала опубликуй API-сервер.');
+  let response;
+  try{response=await fetch(base+path,options);}catch(error){throw new Error('Не удалось связаться с backend. Проверь, что сервер PARTS GARAGE запущен и URL API указан правильно.');}
+  const payload=await response.json().catch(()=>({}));
+  if(!response.ok)throw new Error(payload.detail||('Ошибка API: HTTP '+response.status));
+  return payload;
+}
+function renderTecDocVehicleMatches(vin,vehicles){
+  const state=$('#vinDecodeState');
+  state.innerHTML='<section class="vin-result"><div class="vin-result-top"><span class="status-pill"><i></i> VIN НАЙДЕН В TECDOC</span><span class="vin-result-code">'+escapeAttr(vin)+'</span></div><h3>Найдено вариантов: '+vehicles.length+'</h3><p class="vin-api-note">VIN может соответствовать нескольким исполнениям. Выбери вариант с подходящим двигателем и мощностью.</p><div class="vin-vehicle-options">'+vehicles.map((vehicle,index)=>'<article class="vin-vehicle-option"><div><strong>'+escapeAttr(vehicleTitle(vehicle))+'</strong><small>'+(vehicle.ktype?'TecDoc KType: '+escapeAttr(vehicle.ktype):'Коммерческий транспорт')+'</small><div class="vin-result-grid">'+renderVehicleFields(vehicle)+'</div></div><button class="btn btn-primary" data-choose-vehicle="'+index+'">Выбрать <span>→</span></button></article>').join('')+'</div></section>';
+  $$('[data-choose-vehicle]').forEach(button=>button.addEventListener('click',()=>selectTecDocVehicle(Number(button.dataset.chooseVehicle))));
+}
+function selectTecDocVehicle(index){
+  const vehicle=activeVinVehicles[index];
+  if(!vehicle)return;
+  if(!vehicle.ktype){
+    $('#vinDecodeState').innerHTML='<div class="vin-result vin-result-error"><strong>Автомобиль определён, но каталог пока не настроен для этого типа транспорта</strong><p>TecDoc вернул NType вместо KType. Для коммерческого транспорта нужно подключить соответствующий CV-поиск в лицензии.</p><button class="small-btn" id="vinRequestAnyway">Запросить подбор вручную</button></div>';
+    $('#vinRequestAnyway').onclick=()=>openRequestModal({vin:activeVin,car:vehicleTitle(vehicle),part:'Подбор запчастей для коммерческого транспорта'});
+    return;
+  }
+  activeTecDocVehicle=vehicle;
+  activeTecDocParts=[];
+  const categories=Object.entries(categoryNames).map(([key,label])=>'<button class="small-btn" data-vin-category="'+key+'">'+label+'</button>').join('');
+  $('#vinDecodeState').innerHTML='<section class="vin-result"><div class="vin-result-top"><span class="status-pill"><i></i> АВТОМОБИЛЬ ВЫБРАН</span><span class="vin-result-code">KTYPE '+escapeAttr(vehicle.ktype)+'</span></div><h3>'+escapeAttr(vehicleTitle(vehicle))+'</h3><div class="vin-result-grid">'+renderVehicleFields(vehicle)+'</div><p class="vin-api-note">Теперь загружаем каталог деталей, которые TecDoc связывает с этим исполнением автомобиля.</p><div class="vin-category-pick"><small>Категории запчастей</small><div><button class="small-btn active" data-vin-category="all">Все детали</button>'+categories+'</div></div><div id="vinPartsState"><div class="vin-loading"><span class="loading-ring"></span><div><strong>Загружаем запчасти</strong><small>Ищем связанные с автомобилем артикулы TecDoc</small></div></div></div></section>';
+  $$('[data-vin-category]').forEach(button=>button.addEventListener('click',()=>{
+    $$('[data-vin-category]').forEach(item=>item.classList.toggle('active',item===button));
+    loadTecDocParts(button.dataset.vinCategory==='all'?'':button.dataset.vinCategory);
+  }));
+  loadTecDocParts('');
+}
+async function loadTecDocParts(category=''){
+  const target=$('#vinPartsState');
+  if(!target||!activeTecDocVehicle?.ktype)return;
+  target.innerHTML='<div class="vin-loading"><span class="loading-ring"></span><div><strong>Ищем запчасти</strong><small>Получаем артикулы, производителей и фотографии из TecDoc</small></div></div>';
+  const params=new URLSearchParams({
+    country:window.PG_CATALOG_COUNTRY||'RU',
+    language:window.PG_CATALOG_LANGUAGE||'RU',
+    page:'1',
+    per_page:'30'
+  });
+  if(category)params.set('category',category);
+  try{
+    const payload=await backendRequest('/api/v1/vehicles/'+encodeURIComponent(activeTecDocVehicle.ktype)+'/articles?'+params.toString(),{headers:{'Accept':'application/json'}});
+    activeTecDocParts=payload.parts||[];
+    const warning=(payload.warnings||[]).map(item=>'<p class="vin-api-note warning">'+escapeAttr(item)+'</p>').join('');
+    if(!activeTecDocParts.length){
+      target.innerHTML=warning+'<div class="vin-parts-empty"><strong>Для этого варианта детали не найдены</strong><p>Попробуй другую категорию или проверь выбранное исполнение автомобиля.</p></div>';
+      return;
+    }
+    const cards=activeTecDocParts.map((part,index)=>{
+      const image=safeImageUrl((part.images||[])[0]);
+      const criteria=(part.criteria||[]).slice(0,4).map(item=>'<span>'+escapeAttr(item.name)+': '+escapeAttr(item.value)+'</span>').join('');
+      const oe=(part.oe_numbers||[]).slice(0,3).join(', ');
+      const name=part.name||part.generic_article||'Автозапчасть';
+      return '<article class="vin-part-card"><div class="vin-part-image">'+(image?'<img src="'+escapeAttr(image)+'" alt="'+escapeAttr(name)+'" loading="lazy">':'<span>⚙</span>')+'</div><div class="vin-part-info"><span class="vin-part-brand">'+escapeAttr(part.brand||'Производитель не указан')+'</span><h4>'+escapeAttr(name)+'</h4><small>Артикул: '+escapeAttr(part.article_number||'не указан')+'</small>'+(part.generic_article?'<p class="vin-part-group">'+escapeAttr(part.generic_article)+'</p>':'')+(oe?'<p class="vin-part-oe">OE: '+escapeAttr(oe)+'</p>':'')+(criteria?'<div class="vin-part-criteria">'+criteria+'</div>':'')+'<div class="vin-part-bottom"><strong>'+(part.price!=null?money(Number(part.price)):'Цена по запросу')+'</strong><button class="btn btn-primary" data-request-part="'+index+'">Запросить цену <span>→</span></button></div></div></article>';
+    }).join('');
+    target.innerHTML=warning+'<div class="vin-parts-heading"><strong>Найдено деталей: '+(payload.total??activeTecDocParts.length)+'</strong><small>Данные совместимости из TecDoc</small></div><div class="vin-parts-grid">'+cards+'</div>';
+    $$('[data-request-part]').forEach(button=>button.addEventListener('click',()=>{
+      const part=activeTecDocParts[Number(button.dataset.requestPart)];
+      if(!part)return;
+      const requestPart=[part.name,part.brand,part.article_number?'артикул '+part.article_number:'',part.oe_numbers?.length?'OE '+part.oe_numbers.join(', '):''].filter(Boolean).join(' · ');
+      openRequestModal({vin:activeVin,car:vehicleTitle(activeTecDocVehicle),part:requestPart});
+    }));
+  }catch(error){
+    target.innerHTML='<div class="vin-result-error"><strong>Не удалось загрузить каталог запчастей</strong><p>'+escapeAttr(error.message||'Ошибка TecDoc API.')+'</p><p class="vin-api-note">Для показа реальных артикулов нужен активный TecDoc Web Service и настроенный endpoint каталога.</p><button class="small-btn" id="vinRetryParts">Повторить запрос</button></div>';
+    $('#vinRetryParts').onclick=()=>loadTecDocParts(category);
+  }
 }
 async function lookupVin(v,button){
   const vin=cleanVin(v),state=$('#vinDecodeState');
   if(!vinFormatIsValid(vin)){toast('Проверь VIN: нужно 17 символов, без I, O и Q','!');$('#modalVin').focus();return;}
-  button.disabled=true;button.textContent='Расшифровываем…';
-  state.innerHTML='<div class="vin-loading"><span class="loading-ring"></span><div><strong>Проверяем VIN</strong><small>Запрашиваем данные производителя из базы NHTSA</small></div></div>';
+  button.disabled=true;button.textContent='Ищем автомобиль…';
+  state.innerHTML='<div class="vin-loading"><span class="loading-ring"></span><div><strong>Запрос в TecAlliance</strong><small>Определяем точное исполнение автомобиля по VIN</small></div></div>';
+  activeVin=vin;activeVinVehicles=[];activeTecDocVehicle=null;activeTecDocParts=[];
   try{
-    const url='https://vpic.nhtsa.dot.gov/api/vehicles/DecodeVinValuesExtended/'+encodeURIComponent(vin)+'?format=json';
-    const response=await fetch(url,{method:'GET',headers:{'Accept':'application/json'}});
-    if(!response.ok)throw new Error('Сервис VIN временно недоступен. Попробуй ещё раз чуть позже.');
-    const payload=await response.json(),result=payload?.Results?.[0];
-    if(!result)throw new Error('Сервис не вернул данные по этому VIN.');
-    const vehicle=buildVinVehicle(result);
-    if(!vehicle.make&&!vehicle.model&&!vehicle.year)throw new Error('Не удалось определить автомобиль. Возможно, эта модель не представлена в базе NHTSA или VIN введён с ошибкой.');
-    const car=vehicle.title||('Автомобиль по VIN '+vin);
-    const fieldsHtml=vehicle.fields.map(([label,value])=>'<div class="vin-result-item"><small>'+escapeAttr(label)+'</small><strong>'+escapeAttr(value)+'</strong></div>').join('');
-    const warning=vehicle.errorCode&&vehicle.errorCode!=='0'?'<p class="vin-api-note warning">База вернула частичный результат. Проверь данные автомобиля перед заказом.</p>':'';
-    state.innerHTML='<section class="vin-result"><div class="vin-result-top"><span class="status-pill"><i></i> VIN РАСШИФРОВАН</span><span class="vin-result-code">'+escapeAttr(vin)+'</span></div><h3>'+escapeAttr(car)+'</h3><div class="vin-result-grid">'+fieldsHtml+'</div>'+warning+'<p class="vin-api-note">Источник: NHTSA vPIC. Для некоторых автомобилей, особенно не предназначенных для рынка США, данные могут быть неполными. Расшифровка определяет автомобиль, но сама по себе не подтверждает совместимость конкретной запчасти.</p><div class="vin-result-actions"><button class="btn btn-primary" id="vinUseResult">Подобрать запчасти <span>→</span></button><button class="small-btn" id="vinCopyResult">Скопировать данные</button></div><div class="vin-category-pick"><small>Выбери группу деталей:</small><div>'+Object.entries(categoryNames).map(([key,label])=>'<button class="small-btn" data-vin-category="'+key+'">'+label+'</button>').join('')+'</div></div></section>';
-    const openRequest=(part)=>{closeModal();openRequestModal({vin,car,part});};
-    $('#vinUseResult').onclick=()=>openRequest('Подбор запчастей по VIN');
-    $('#vinCopyResult').onclick=()=>{const text=vehicle.fields.map(([k,val])=>k+': '+val).join('\n')+'\nVIN: '+vin;if(navigator.clipboard?.writeText){navigator.clipboard.writeText(text).then(()=>toast('Данные автомобиля скопированы')).catch(()=>toast('Не удалось скопировать данные','!'));}else toast('Копирование недоступно в этом браузере','!');};
-    $('[data-vin-category]').forEach(b=>b.addEventListener('click',()=>openRequest('Подбор: '+categoryNames[b.dataset.vinCategory])));
+    const payload=await backendRequest('/api/v1/vehicles/identify',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({vin,country:window.PG_VIN_COUNTRY||'RU'})});
+    activeVinVehicles=payload.vehicles||[];
+    if(!activeVinVehicles.length)throw new Error('TecDoc не вернул варианты автомобиля для этого VIN.');
+    renderTecDocVehicleMatches(vin,activeVinVehicles);
   }catch(error){
-    state.innerHTML='<div class="vin-result vin-result-error"><strong>Не получилось расшифровать VIN</strong><p>'+escapeAttr(error.message||'Ошибка соединения с сервисом VIN.')+'</p><p class="vin-api-note">Можно всё равно отправить VIN менеджеру — он проверит автомобиль вручную.</p><button class="small-btn" id="vinRequestAnyway">Отправить VIN на ручной подбор</button></div>';
-    $('#vinRequestAnyway').onclick=()=>{closeModal();openRequestModal({vin,part:'Ручной подбор запчастей по VIN'});};
+    state.innerHTML='<div class="vin-result vin-result-error"><strong>Не удалось определить автомобиль</strong><p>'+escapeAttr(error.message||'Ошибка соединения с TecAlliance.')+'</p><p class="vin-api-note">Проверь, что backend опубликован, а ключ Vehicle Identification Service добавлен в секреты сервера.</p><button class="small-btn" id="vinRetry">Повторить поиск</button></div>';
+    $('#vinRetry').onclick=()=>lookupVin(vin,button);
   }finally{button.disabled=false;button.textContent='Расшифровать VIN';}
 }
 function openVinModal(vin=''){
-  modal('Подбор по VIN','Введи 17 символов — попробуем определить марку, модель, год и характеристики автомобиля.',`<form id="vinModalForm"><div class="field"><label>VIN-КОД АВТОМОБИЛЯ</label><input id="modalVin" name="vin" maxlength="17" value="${escapeAttr(vin)}" placeholder="Например, WBA..." autocomplete="off" required></div><p class="form-note">VIN можно найти в СТС, ПТС или под лобовым стеклом со стороны водителя. Буквы I, O и Q в VIN не используются.</p><button class="btn btn-primary modal-submit" id="vinDecodeSubmit" type="submit">Расшифровать VIN <span>→</span></button></form><div id="vinDecodeState"></div>`);
+  modal('Каталог запчастей по VIN','Определим автомобиль через TecAlliance и покажем связанные с ним детали из TecDoc.',`<form id="vinModalForm"><div class="field"><label>VIN-КОД АВТОМОБИЛЯ</label><input id="modalVin" name="vin" maxlength="17" value="${escapeAttr(vin)}" placeholder="Например, WBA..." autocomplete="off" required></div><p class="form-note">VIN содержит 17 символов. Буквы I, O и Q не используются.</p><button class="btn btn-primary modal-submit" id="vinDecodeSubmit" type="submit">Найти запчасти <span>→</span></button></form><div id="vinDecodeState"></div>`);
   $('#vinModalForm').onsubmit=async e=>{e.preventDefault();await lookupVin($('#modalVin').value,$('#vinDecodeSubmit'));};
   $('#modalVin').addEventListener('input',e=>{e.target.value=cleanVin(e.target.value).slice(0,17);});
   if(vin)lookupVin(vin,$('#vinDecodeSubmit'));
