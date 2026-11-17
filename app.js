@@ -145,7 +145,7 @@ async function lookupVin(v,button){
     const payload=await backendRequest('/api/v1/vehicles/identify',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},body:JSON.stringify({vin,country:window.PG_VIN_COUNTRY||'RU'})});
     activeVinVehicles=payload.vehicles||[];
     if(!activeVinVehicles.length)throw new Error('TecDoc не вернул варианты автомобиля для этого VIN.');
-    renderTecDocVehicleMatches(vin,activeVinVehicles);
+    if(activeVinVehicles.length===1)selectTecDocVehicle(0);else renderTecDocVehicleMatches(vin,activeVinVehicles);
   }catch(error){
     state.innerHTML='<div class="vin-result vin-result-error"><strong>Не удалось определить автомобиль</strong><p>'+escapeAttr(error.message||'Ошибка соединения с TecAlliance.')+'</p><p class="vin-api-note">Проверь, что backend опубликован, а ключ Vehicle Identification Service добавлен в секреты сервера.</p><button class="small-btn" id="vinRetry">Повторить поиск</button></div>';
     $('#vinRetry').onclick=()=>lookupVin(vin,button);
