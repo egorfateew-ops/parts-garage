@@ -264,6 +264,7 @@ class TecDocClient:
             "language": language,
             "page": page,
             "per_page": per_page,
+            "provider_id": self.settings.tecdoc_provider_id,
         }
         payload = _render_template(template, context)
         if not isinstance(payload, dict):
