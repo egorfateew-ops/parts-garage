@@ -21,7 +21,7 @@ services:
         value: Authorization
       - key: TECDOC_VIN_AUTH_PREFIX
         value: ""
-      - key: TECDOC_PARTS_URL
+      - key: TECDOC_PROVIDER_ID\n        sync: false\n      - key: TECDOC_PARTS_URL
         sync: false
       - key: TECDOC_PARTS_API_KEY
         sync: false
