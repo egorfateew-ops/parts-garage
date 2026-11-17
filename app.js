@@ -151,9 +151,39 @@ async function lookupVin(v,button){
     $('#vinRetry').onclick=()=>lookupVin(vin,button);
   }finally{button.disabled=false;button.textContent='Расшифровать VIN';}
 }
+const demoVinParts = [
+  {id:9901,name:'Масляный фильтр',brand:'MANN-FILTER',sku:'DEMO-W712',category:'consumables',price:1190,fit:'Honda Accord · пример',badge:'ДЕМО',icon:'▤',visual:'visual-engine',popular:99,description:'Демонстрационная карточка масляного фильтра. Применимость к автомобилю не подтверждена.' ,generic_article:'Масляный фильтр',oe_numbers:['DEMO-OE-001'],criteria:[{name:'Тип',value:'Навинчиваемый'},{name:'Режим',value:'Демо'}]},
+  {id:9902,name:'Передние тормозные колодки',brand:'BREMBO',sku:'DEMO-P85020',category:'brakes',price:5490,fit:'Honda Accord · пример',badge:'ДЕМО',icon:'◉',visual:'visual-brakes',popular:98,description:'Демонстрационная карточка комплекта тормозных колодок. Применимость к автомобилю не подтверждена.',generic_article:'Комплект тормозных колодок',oe_numbers:['DEMO-OE-002'],criteria:[{name:'Ось',value:'Передняя'},{name:'Комплект',value:'4 шт.'}]},
+  {id:9903,name:'Воздушный фильтр двигателя',brand:'BOSCH',sku:'DEMO-F026',category:'consumables',price:1450,fit:'Honda Accord · пример',badge:'ДЕМО',icon:'▥',visual:'visual-engine',popular:96,description:'Демонстрационная карточка воздушного фильтра. Применимость к автомобилю не подтверждена.',generic_article:'Воздушный фильтр',oe_numbers:['DEMO-OE-003'],criteria:[{name:'Тип',value:'Панельный'},{name:'Режим',value:'Демо'}]},
+  {id:9904,name:'Свеча зажигания, комплект 4 шт.',brand:'NGK',sku:'DEMO-IRIDIUM',category:'electrics',price:3680,fit:'Honda Accord · пример',badge:'ДЕМО',icon:'ϟ',visual:'visual-electrics',popular:94,description:'Демонстрационная карточка комплекта свечей зажигания. Применимость к автомобилю не подтверждена.',generic_article:'Свеча зажигания',oe_numbers:['DEMO-OE-004'],criteria:[{name:'Тип',value:'Иридиевая'},{name:'Количество',value:'4 шт.'}]}
+];
+
+function addDemoPartToCart(index){
+  const part=demoVinParts[index];
+  if(!part)return;
+  if(!customProducts.some(item=>item.id===part.id)){
+    customProducts.push({...part});
+    save('customProducts',customProducts);
+    allProducts=[...products,...customProducts];
+  }
+  addToCart(part.id);
+}
+function renderDemoCatalog(){
+  activeVin='DEMO-HONDA-ACCORD';
+  const fields=[
+    {label:'Марка',value:'Honda'},
+    {label:'Модель',value:'Accord'},
+    {label:'Поколение',value:'VII · условный пример'},
+    {label:'Двигатель',value:'2.4 i-VTEC · условный пример'}
+  ];
+  const cards=demoVinParts.map((part,index)=>'<article class="vin-part-card"><div class="vin-demo-product-visual '+part.visual+'"><span class="product-art">'+part.icon+'</span><small>ИЗОБРАЖЕНИЕ ДЛЯ ДЕМО</small></div><div class="vin-part-info"><span class="vin-part-brand">'+escapeAttr(part.brand)+'</span><h4>'+escapeAttr(part.name)+'</h4><small>Артикул: '+escapeAttr(part.sku)+'</small><p class="vin-part-group">'+escapeAttr(part.generic_article)+'</p><p class="vin-part-oe">Условный OE: '+escapeAttr(part.oe_numbers[0])+'</p><div class="vin-part-criteria">'+part.criteria.map(item=>'<span>'+escapeAttr(item.name)+': '+escapeAttr(item.value)+'</span>').join('')+'</div><div class="vin-part-bottom"><strong>'+money(part.price)+'</strong><button class="btn btn-primary" data-demo-add="'+index+'">В корзину <span>+</span></button></div></div></article>').join('');
+  $('#vinDecodeState').innerHTML='<section class="vin-result"><div class="vin-result-top"><span class="status-pill"><i></i> ДЕМО-КАТАЛОГ</span><span class="vin-result-code">TEST PREVIEW</span></div><h3>Honda Accord · пример подбора</h3><div class="vin-result-grid">'+renderVehicleFields({fields})+'</div><div class="vin-demo-warning"><strong>Демонстрационные данные</strong><p>Это пример интерфейса: названия, артикулы, цены и совместимость условные. Они не получены из TecDoc и не подходят для оформления реального заказа.</p></div><div class="vin-parts-heading"><strong>Пример найденных запчастей · 4</strong><small>Макет каталога PARTS GARAGE</small></div><div class="vin-parts-grid">'+cards+'</div></section>';
+  $$('[data-demo-add]').forEach(button=>button.addEventListener('click',()=>addDemoPartToCart(Number(button.dataset.demoAdd))));
+}
 function openVinModal(vin=''){
-  modal('Каталог запчастей по VIN','Определим автомобиль через TecAlliance и покажем связанные с ним детали из TecDoc.',`<form id="vinModalForm"><div class="field"><label>VIN-КОД АВТОМОБИЛЯ</label><input id="modalVin" name="vin" maxlength="17" value="${escapeAttr(vin)}" placeholder="Например, WBA..." autocomplete="off" required></div><p class="form-note">VIN содержит 17 символов. Буквы I, O и Q не используются.</p><button class="btn btn-primary modal-submit" id="vinDecodeSubmit" type="submit">Найти запчасти <span>→</span></button></form><div id="vinDecodeState"></div>`);
+  modal('Каталог запчастей по VIN','Определим автомобиль через TecAlliance и покажем связанные с ним детали из TecDoc.',`<form id="vinModalForm"><div class="field"><label>VIN-КОД АВТОМОБИЛЯ</label><input id="modalVin" name="vin" maxlength="17" value="${escapeAttr(vin)}" placeholder="Например, WBA..." autocomplete="off" required></div><p class="form-note">VIN содержит 17 символов. Буквы I, O и Q не используются.</p><button class="btn btn-primary modal-submit" id="vinDecodeSubmit" type="submit">Найти запчасти <span>→</span></button></form><button class="small-btn vin-demo-preview" id="demoCatalogPreview" type="button">Посмотреть пример каталога <span>↗</span></button><div id="vinDecodeState"></div>`);
   $('#vinModalForm').onsubmit=async e=>{e.preventDefault();await lookupVin($('#modalVin').value,$('#vinDecodeSubmit'));};
+  $('#demoCatalogPreview').onclick=renderDemoCatalog;
   $('#modalVin').addEventListener('input',e=>{e.target.value=cleanVin(e.target.value).slice(0,17);});
   if(vin)lookupVin(vin,$('#vinDecodeSubmit'));
 }
