@@ -46,3 +46,44 @@
 @keyframes vinSpin{to{transform:rotate(360deg)}}
 #vinDecodeSubmit:disabled{opacity:.65;cursor:wait}
 @media(max-width:760px){.vin-result{padding:12px}.vin-result h3{font-size:17px}.vin-result-grid{gap:6px}.vin-result-item{padding:8px}.vin-result-actions{align-items:stretch}.vin-result-actions .btn{flex:1}.vin-result-code{font-size:7px}}
+
+
+/* TecDoc vehicle selection and linked parts catalogue */
+.vin-vehicle-options{display:grid;gap:10px;margin-top:14px}
+.vin-vehicle-option{border:1px solid #e5eae1;background:#fff;border-radius:10px;padding:13px}
+.vin-vehicle-option>div>strong{display:block;font:700 14px 'Space Grotesk',sans-serif;color:#202823}
+.vin-vehicle-option>div>small{display:block;color:#8b958e;font-size:8px;margin:5px 0 10px}
+.vin-vehicle-option .vin-result-grid{margin-bottom:12px}
+.vin-vehicle-option>.btn{height:37px;padding:0 13px;gap:12px}
+.vin-category-pick .small-btn.active{background:#1a2321;color:#fff;border-color:#1a2321}
+.vin-parts-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:18px 0 10px}
+.vin-parts-heading strong{font:700 13px 'Space Grotesk',sans-serif;color:#263029}
+.vin-parts-heading small{font-size:8px;color:#8d978f}
+.vin-parts-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.vin-part-card{min-width:0;overflow:hidden;border:1px solid #e4e9e0;border-radius:10px;background:#fff}
+.vin-part-image{height:135px;background:linear-gradient(140deg,#f5f7f2,#e8eee4);display:grid;place-items:center;overflow:hidden}
+.vin-part-image img{width:100%;height:100%;object-fit:contain;padding:10px}
+.vin-part-image>span{font-size:42px;color:#91ad69}
+.vin-part-info{padding:11px}
+.vin-part-brand{font-size:7px;letter-spacing:.12em;font-weight:800;color:#6d942e;text-transform:uppercase}
+.vin-part-info h4{font:700 12px/1.35 'Space Grotesk',sans-serif;margin:7px 0 5px;color:#222a25}
+.vin-part-info>small{font-size:8px;color:#8a948d}
+.vin-part-group,.vin-part-oe{font-size:8px;line-height:1.5;color:#77827a;margin:7px 0 0}
+.vin-part-criteria{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.vin-part-criteria span{font-size:7px;color:#7c877e;background:#f1f4ee;padding:4px 6px;border-radius:4px}
+.vin-part-bottom{display:flex;flex-direction:column;align-items:stretch;gap:9px;margin-top:12px}
+.vin-part-bottom>strong{font:700 13px 'Space Grotesk',sans-serif;color:#263029}
+.vin-part-bottom .btn{height:35px;padding:0 10px;font-size:8px;gap:8px}
+.vin-parts-empty{margin-top:13px;border:1px dashed #d6dfd0;border-radius:10px;padding:20px;text-align:center;background:#fff}
+.vin-parts-empty strong{font:700 13px 'Space Grotesk',sans-serif;color:#2c352e}
+.vin-parts-empty p{font-size:8px;line-height:1.6;color:#89948c}
+@media(max-width:760px){
+  .vin-vehicle-option{padding:10px}
+  .vin-parts-grid{grid-template-columns:1fr}
+  .vin-part-card{display:grid;grid-template-columns:105px 1fr}
+  .vin-part-image{height:100%;min-height:150px}
+  .vin-part-info{padding:10px}
+  .vin-part-info h4{font-size:11px}
+  .vin-part-bottom{margin-top:9px}
+  .vin-parts-heading{align-items:flex-start;flex-direction:column;gap:4px}
+}
