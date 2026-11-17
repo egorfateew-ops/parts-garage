@@ -6,7 +6,7 @@
 
 1. Открой **Settings → Pages**.
 2. В разделе **Build and deployment** выбери `Deploy from a branch`.
-3. Выбери ветку `main`, папку `/(root)) и нажми **Save**.
+3. Выбери ветку `main`, папку `/(root)` и нажми **Save**.
 4. Сайт: https://egorfateew-ops.github.io/parts-garage/
 
 ## Возможности демо
