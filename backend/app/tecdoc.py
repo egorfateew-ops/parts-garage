@@ -37,7 +37,7 @@ def _vehicle_from_raw(raw: dict[str, Any]) -> dict[str, Any]:
 
     ktype = _first(
         raw.get("kType"), raw.get("ktypeId"), raw.get("ktypeId"),
-        ktype_data.get("kType"), ktype_data.get("ktype"), raw.get("typeId")
+        ktype_data.get("kType"), ktype_data.get("ktype"), ktype_data.get("id"), raw.get("ktype"), raw.get("typeId")
     )
     ntype = _first(raw.get("nType"), raw.get("ntypeId"))
     make = _first(raw.get("make"), raw.get("manufacturer"), info.get("make"), info.get("manufacturer"))
@@ -266,6 +266,8 @@ class TecDocClient:
             "per_page": per_page,
         }
         payload = _render_template(template, context)
+        if not isinstance(payload, dict):
+            raise ProviderNotConfigured("TECDOC_PARTS_REQUEST_TEMPLATE должен быть JSON-объектом.")
         warnings = []
         group_map = self.settings.product_group_map
         if category:
