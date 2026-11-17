@@ -87,3 +87,26 @@
   .vin-part-bottom{margin-top:9px}
   .vin-parts-heading{align-items:flex-start;flex-direction:column;gap:4px}
 }
+
+
+/* Explicit demo catalogue preview */
+.vin-demo-preview{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;min-height:39px;margin-top:9px;border:1px dashed #a9bd91;background:#f5f9ef;color:#587b2c;border-radius:8px;font-size:9px;font-weight:800;cursor:pointer;transition:.2s}
+.vin-demo-preview:hover{background:#edf6df;border-color:#86a75b}
+.vin-demo-preview span{font-size:13px}
+.vin-demo-warning{margin-top:13px;padding:11px 12px;border:1px solid #f1dfbd;background:#fff9ed;border-radius:8px}
+.vin-demo-warning strong{display:block;color:#956b27;font-size:9px;font-weight:800}
+.vin-demo-warning p{margin:5px 0 0;color:#8d7b5e;font-size:8px;line-height:1.55}
+.vin-demo-product-visual{height:135px;position:relative;display:grid;place-items:center;overflow:hidden;background:linear-gradient(140deg,#f6f7f3,#e9ede6)}
+.vin-demo-product-visual:before{content:"";position:absolute;width:115px;height:115px;border:1px solid rgba(80,100,70,.12);border-radius:50%;box-shadow:0 0 0 14px rgba(80,100,70,.035),0 0 0 28px rgba(80,100,70,.025)}
+.vin-demo-product-visual:after{content:"";position:absolute;width:80px;height:80px;border-radius:50%;background:rgba(255,255,255,.5);filter:blur(3px)}
+.vin-demo-product-visual.visual-brakes{background:linear-gradient(145deg,#f7f2ed,#e9dfd7)}
+.vin-demo-product-visual.visual-electrics{background:linear-gradient(145deg,#f7f4e9,#ece6d2)}
+.vin-demo-product-visual .product-art{font-size:54px}
+.vin-demo-product-visual small{position:absolute;z-index:2;bottom:8px;left:0;right:0;text-align:center;font-size:6px;font-weight:800;letter-spacing:.1em;color:#89938b}
+.vin-demo-product-visual+.vin-part-info{padding:11px}
+.vin-demo-product-visual~.vin-part-info .vin-part-bottom .btn{white-space:nowrap}
+@media(max-width:760px){
+  .vin-demo-preview{min-height:42px}
+  .vin-demo-product-visual{height:100%;min-height:150px}
+  .vin-demo-product-visual .product-art{font-size:42px}
+}
